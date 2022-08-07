@@ -13,25 +13,18 @@
  */
 var pathSum = function(root, targetSum) {
     if(!root) return 0;
-    var num = 0;
-    function dfs(node, arr, curSum){
-        if(!node) return;
-        else if (curSum > targetSum) {
-            arr[0] && (curSum-=arr.shift());
-        }
-        arr.push(node.val);
-        curSum+=node.val;
-        dfs(node.left, arr, curSum);
-        if(!arr.length) curSum = 0;
-        dfs(node.right, arr, curSum);
-        if(!arr.length) curSum = 0;
-        if(curSum === targetSum) num++;
-        curSum && (curSum-=arr.pop());       
-    }
-    dfs(root, [], 0);
-    return num;
+    var res = 0;
+    res += calNodePath(root, targetSum, 0);
+    res += pathSum(root.left, targetSum);
+    res += pathSum(root.right, targetSum);
+    return res;
 };
-
+function calNodePath(node, target, num){
+    if(!node) return num;
+    var n = node.val === target ? num + 1 : num;
+    var left = calNodePath(node.left, target - node.val, n);
+    return calNodePath(node.right, target - node.val, left);
+}
 
 function createTreeByArr(arr) {
     if (!arr || !arr.length) return null;
@@ -81,6 +74,6 @@ function createTreeByArr(arr) {
     return arrNode[0];
 }
 
-var root = createTreeByArr([5,4,8,11,null,13,4,7,2,null,null,5,1]);
-var res = pathSum(root, 8);
+var root = createTreeByArr([5,4,8,11,null,13,4,7,2, null, null, 5, 1, 4]);
+var res = pathSum(root,22);
 console.log(res);
